@@ -27,22 +27,25 @@ class Question:
         self.choix = choix
         self.bonne_reponse = bonne_reponse
 
-    def FromData(data):
-        # ....
-        q = Question(data[2], data[0], data[1])
+    def FromJsonData(data):
+        choix = [i[0] for i in data["choix"]]
+        data_bonne_reponse = [i[0] for i in data["choix"] if i[1]]
+        if len(data_bonne_reponse) != 1:
+            return None
+        q = Question(data["titre"], choix, data_bonne_reponse[0] )
         return q
 
     def poser(self):
         print("QUESTION")
         print("  " + self.titre)
         for i in range(len(self.choix)):
-            print("  ", i+1, "-", self.choix[i][0])
+            print("  ", i+1, "-", self.choix[i])
 
         print()
         resultat_response_correcte = False
         reponse_int = Question.demander_reponse_numerique_utlisateur(1, len(self.choix))
         print(self.choix[reponse_int-1])
-        if self.choix[reponse_int-1][0].lower() == self.bonne_reponse.lower():
+        if self.choix[reponse_int-1].lower() == self.bonne_reponse.lower():
             print("Bonne réponse")
             resultat_response_correcte = True
         else:
@@ -103,12 +106,18 @@ filename = input("Veuillez saisir le nom du fichier a utiliser:")
 
 try:
  file = open(filename)
+ file_data = file.read()
+ file.close()
 except:
     print("erreur de ficher")
 else:
-    data = json.load(file)
+    questionnaire_data = json.loads(file_data)
+    questionnaire_data_questions = questionnaire_data["questions"]
+    q = Question.FromJsonData(questionnaire_data_questions[0])
+    q.poser()
 
-    for item in data['questions']:
+'''
+    for item in questionnaire_data['questions']:
         for i in item['choix']:
             if i[1]:
                 bonne_reponse = i[0]
@@ -118,7 +127,7 @@ else:
                 Question(item['titre'], item['choix'], bonne_reponse)
             )
         ).lancer()
-    file.close()
+'''
 
 
 
