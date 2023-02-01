@@ -1,24 +1,5 @@
-# PROJET QUESTIONNAIRE V3 : POO
-#
-# - Pratiquer sur la POO
-# - Travailler sur du code existant
-# - Mener un raisonnement
-#
-# -> Définir les entitées (données, actions)
-#
-# Question
-#    - titre       - str
-#    - choix       - (str)
-#    - bonne_reponse   - str
-#
-#    - poser()  -> bool
-#
-# Questionnaire
-#    - questions      - (Question)
-#
-#    - lancer()
-#
 import json
+import sys
 
 
 class Question:
@@ -76,6 +57,19 @@ class Questionnaire:
         questionnaire_data_questions = data["questions"]
         questions = [Question.from_json_data(i) for i in questionnaire_data_questions]
         return Questionnaire(questions, data["categorie"], data["titre"], data["difficulte"])
+
+    def from_json_file(filename):
+        try:
+            file = open(filename, "r")
+            file_data = file.read()
+            file.close()
+        except:
+            print("ERREUR: de fichier")
+            return None
+        else:
+            questionnaire_data = json.loads(file_data)
+            return Questionnaire.from_json_data(questionnaire_data)
+
     def lancer(self):
         score = 0
         nb_question = len(self.questions)
@@ -95,28 +89,15 @@ class Questionnaire:
 
 filename = 'cinema_starwars_confirme.json' #input("Veuillez saisir le nom du fichier a utiliser:")
 
-try:
- file = open(filename)
- file_data = file.read()
- file.close()
-except:
-    print("erreur de ficher")
-else:
-    questionnaire_data = json.loads(file_data)
-    Questionnaire.from_json_data(questionnaire_data).lancer()
+if len(sys.argv) < 2:
+    print("ERREUR: Vous devez spécifier le nom du fichier à chrager")
+    exit(0)
 
-'''
-    for item in questionnaire_data['questions']:
-        for i in item['choix']:
-            if i[1]:
-                bonne_reponse = i[0]
-        Questionnaire(
-            (
-                Question(item['titre'], item['choix'], bonne_reponse),
-                Question(item['titre'], item['choix'], bonne_reponse)
-            )
-        ).lancer()
-'''
+json_filename = sys.argv[1]
+questionnaire = Questionnaire.from_json_file(json_filename)
+
+if questionnaire:
+    questionnaire.lancer()
 
 
 
