@@ -55,7 +55,7 @@ class Questionnaire:
 
     def from_json_data(data):
         questionnaire_data_questions = data["questions"]
-        questions = [Question.from_json_data(i) for i in questionnaire_data_questions]
+        questions = [Question.from_json_data(i) for i in questionnaire_data_questions if Question.from_json_data(i)]
         return Questionnaire(questions, data["categorie"], data["titre"], data["difficulte"])
 
     def from_json_file(filename):
