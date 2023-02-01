@@ -35,8 +35,8 @@ class Question:
         q = Question(data["titre"], choix, data_bonne_reponse[0] )
         return q
 
-    def poser(self):
-        print("QUESTION")
+    def poser(self, num_question, nb_questions):
+        print(f"QUESTION {num_question} / {nb_questions}")
         print("  " + self.titre)
         for i in range(len(self.choix)):
             print("  ", i+1, "-", self.choix[i])
@@ -78,14 +78,16 @@ class Questionnaire:
         return Questionnaire(questions, data["categorie"], data["titre"], data["difficulte"])
     def lancer(self):
         score = 0
+        nb_question = len(self.questions)
         print("------")
         print("QUESTIONNAIRE : " + self.titre)
         print("  Catégorie : " + self.categorie)
         print("  Difficulte : " + self.difficulte)
-        print("  Nombre de question : " + str(len(self.questions)))
+        print("  Nombre de question : " + str(nb_question))
         print("------")
-        for question in self.questions:
-            if question.poser():
+        for i in range(nb_question):
+            question = self.questions[i]
+            if question.poser(i+1, nb_question):
                 score += 1
         print("Score final :", score, "sur", len(self.questions))
         return score
